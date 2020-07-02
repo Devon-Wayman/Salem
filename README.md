@@ -1,2 +1,2 @@
 # Salem
- Salem educaitonal applicaiton
+ Salem Witch Trials educational applicaiton
