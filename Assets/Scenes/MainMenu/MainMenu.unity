@@ -587,6 +587,24 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &614435727 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4713838427868698965, guid: a78056854de4ae24ba70d3dd38161979,
+    type: 3}
+  m_PrefabInstance: {fileID: 4713838428699039658}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &614435729
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 614435727}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecedcf1d05ebb4b4d9a1c023fe3103ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &614505045
 GameObject:
   m_ObjectHideFlags: 0
@@ -932,8 +950,8 @@ BoxCollider:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 47.2031, y: 32.674416, z: 50.11}
-  m_Center: {x: -1.2391464, y: -0.048043378, z: 4.288376}
+  m_Size: {x: 47.2031, y: 32.674416, z: 12.95}
+  m_Center: {x: -1.2391464, y: -0.048043378, z: 3.4}
 --- !u!114 &825654595
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1025,6 +1043,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: UniversalAudioManager
       objectReference: {fileID: 0}
+    - target: {fileID: 2012486225779319567, guid: 63a0cab25600ada438a33244d60c547f,
+        type: 3}
+      propertyPath: fadeTime
+      value: 1.5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 63a0cab25600ada438a33244d60c547f, type: 3}
 --- !u!1001 &4713838428699039658
@@ -1044,7 +1067,7 @@ PrefabInstance:
       objectReference: {fileID: 825654592}
     - target: {fileID: 2109301787, guid: a78056854de4ae24ba70d3dd38161979, type: 3}
       propertyPath: rayDistance
-      value: 0.4
+      value: 0.1
       objectReference: {fileID: 0}
     - target: {fileID: 4713838427868698794, guid: a78056854de4ae24ba70d3dd38161979,
         type: 3}

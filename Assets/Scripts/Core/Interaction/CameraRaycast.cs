@@ -1,5 +1,6 @@
 ﻿// Copyright Devon Wayman 2020
 using System;
+using Salem.Audio;
 using Salem.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -39,7 +40,8 @@ namespace Salem.Core.Interaction {
             if (currentSceneName == "MainMenu") {
                 if (Physics.Raycast (ray, out hit, rayDistance)) {
                     if (hit.transform.name == "Book") {
-                        GlowTransition.Instance.CallForFadeOut ("TestFloor");
+                        GlowTransition.Instance.CallForFadeOut ("StoryScene");
+                        AudioManager.Instance.FadeOutAudio();
                         canRaycast = false; // Disable the raycaster
                     }
                 }
