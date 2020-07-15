@@ -8,6 +8,7 @@ using UnityEngine;
 /// </summary>
 namespace Salem.Audio {
     public class AudioManager : MonoBehaviour {
+        
         public static AudioManager Instance { get; set; }
 
         [SerializeField] private List<AudioSource> audioSources = new List<AudioSource>();
@@ -16,7 +17,9 @@ namespace Salem.Audio {
         private void Awake () {
             if (Instance == null)
                 Instance = this;
+        }
 
+        private void Start() {
             // Add all audio sources in scene to the list
             foreach (AudioSource aud in FindObjectsOfType<AudioSource>())
                 audioSources.Add(aud);

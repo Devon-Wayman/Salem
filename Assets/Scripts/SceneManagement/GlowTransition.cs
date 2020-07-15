@@ -1,7 +1,6 @@
 ﻿// Copyright Devon Wayman
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -12,11 +11,6 @@ namespace Salem.SceneManagement {
 
         private Animator fadeAnimator = null;
         private string sceneToLoad = String.Empty;
-
-        // List of objects to hide once the screen has gone to full white
-        // This prevents any clipping of geometry through the canvas from
-        // occuring; breaking the effect
-        [SerializeField] private List<GameObject> objectsToHide = new List<GameObject> ();
 
         private void Awake () {
             if (Instance == null)
@@ -35,19 +29,7 @@ namespace Salem.SceneManagement {
         #region Fade to white and load scene async before switching 
         // Method called to async load a passed in scene (plays when fade out animation finishes)
         public void LoadScene () {
-            try {
-                StartCoroutine (LoadSceneAsync ());
-                
-                // De-activate any objects in the objectsToHide list before starting
-                // to load the requested level
-                if (!(objectsToHide.Count != 0)) {
-                    foreach (GameObject obj in objectsToHide) {
-                        obj.SetActive (false);
-                    }
-                }
-            } catch (Exception ex) {
-                Debug.LogError ($"Error loading {sceneToLoad}. {ex.Message}");
-            }
+            StartCoroutine (LoadSceneAsync ());
         }
 
         private IEnumerator LoadSceneAsync () {

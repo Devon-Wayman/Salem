@@ -31,9 +31,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84edcf391fd0ab849b1b581d8e615d7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectsToHide:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!1 &4713838427116093922
 GameObject:
   m_ObjectHideFlags: 0
@@ -226,7 +223,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   canRaycast: 1
-  rayDistance: 1
+  rayDistance: 0.15
 --- !u!1 &4713838427780991351
 GameObject:
   m_ObjectHideFlags: 0

@@ -9,10 +9,10 @@ namespace Salem.Core.Interaction {
     public class CameraRaycast : MonoBehaviour {
 
         // Cache a ray to send out to save memory
-        private Ray ray; 
+        private Ray ray;
 
         // Cache hit object to use when raycasting
-        private RaycastHit hit; 
+        private RaycastHit hit;
 
         // Determine if raycast should be on or off
         [SerializeField] private bool canRaycast = true;
@@ -28,7 +28,7 @@ namespace Salem.Core.Interaction {
             currentSceneName = SceneManager.GetActiveScene ().name;
         }
 
-        void Update () {
+        void FixedUpdate () {
             // If we shouldnt be raycasting, return
             if (!canRaycast)
                 return;
@@ -41,11 +41,18 @@ namespace Salem.Core.Interaction {
                 if (Physics.Raycast (ray, out hit, rayDistance)) {
                     if (hit.transform.name == "Book") {
                         GlowTransition.Instance.CallForFadeOut ("StoryScene");
-                        AudioManager.Instance.FadeOutAudio();
+                        AudioManager.Instance.FadeOutAudio ();
                         canRaycast = false; // Disable the raycaster
                     }
                 }
             }
+        }
+
+        // Draw the ray in editor when it is selected
+        void OnDrawGizmosSelected () {
+            Gizmos.color = Color.green;
+            Vector3 direction = transform.TransformDirection (Vector3.forward) * rayDistance;
+            Gizmos.DrawRay (transform.position, direction);
         }
     }
 }
