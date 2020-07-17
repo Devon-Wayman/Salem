@@ -5,6 +5,7 @@
     "com.unity.postprocessing": "2.3.0",
     "com.unity.render-pipelines.universal": "7.4.1",
     "com.unity.test-framework": "1.1.14",
+    "com.unity.timeline": "1.2.15",
     "com.unity.ugui": "1.0.0",
     "com.unity.xr.interaction.toolkit": "0.9.4-preview",
     "com.unity.xr.interactionsubsystems": "1.0.1",

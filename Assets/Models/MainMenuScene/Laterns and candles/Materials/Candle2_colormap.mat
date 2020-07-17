@@ -106,7 +106,7 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _BaseColor: {r: 0.8, g: 0.8, b: 0.8, a: 0}
+    - _BaseColor: {r: 0.5283019, g: 0.241723, b: 0.241723, a: 0}
     - _Color: {r: 0.8, g: 0.8, b: 0.8, a: 1}
     - _EmissionColor: {r: 0.7, g: 0.7, b: 0.7, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
