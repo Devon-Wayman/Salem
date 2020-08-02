@@ -270,7 +270,7 @@ MonoBehaviour:
     m_RichText: 0
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
-    m_LineSpacing: 0.67
+    m_LineSpacing: 1
   m_Text: Salem
 --- !u!222 &166423509
 CanvasRenderer:
