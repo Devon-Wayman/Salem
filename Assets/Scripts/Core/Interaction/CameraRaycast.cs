@@ -1,4 +1,4 @@
-﻿// Copyright Devon Wayman 2020
+﻿// Author: Devon Wayman
 using System;
 using Salem.Audio;
 using Salem.SceneManagement;
@@ -23,36 +23,38 @@ namespace Salem.Core.Interaction {
         // Current scene name
         private string currentSceneName = String.Empty;
 
-        private void Awake () {
+        private void Awake() {
             // Set current scene name to scene we've loaded into
-            currentSceneName = SceneManager.GetActiveScene ().name;
+            currentSceneName = SceneManager.GetActiveScene().name;
+
+            // Disable this object if not in the main menu
+            if (currentSceneName != "MainMenu")
+                this.enabled = false;
         }
 
-        void FixedUpdate () {
+        void FixedUpdate() {
             // If we shouldnt be raycasting, return
             if (!canRaycast)
                 return;
 
-            ray = new Ray (transform.position, transform.forward);
-            Vector3 forward = transform.TransformDirection (Vector3.forward) * rayDistance;
-            Debug.DrawRay (transform.position, forward, Color.green);
+            ray = new Ray(transform.position, transform.forward);
+            Vector3 forward = transform.TransformDirection(Vector3.forward) * rayDistance;
+            Debug.DrawRay(transform.position, forward, Color.green);
 
-            if (currentSceneName == "MainMenu") {
-                if (Physics.Raycast (ray, out hit, rayDistance)) {
-                    if (hit.transform.name == "Book") {
-                        GlowTransition.Instance.CallForFadeOut ("StoryScene");
-                        AudioManager.Instance.FadeOutAudio ();
-                        canRaycast = false; // Disable the raycaster
-                    }
+            if (Physics.Raycast(ray, out hit, rayDistance)) {
+                if (hit.transform.name == "Book") {
+                    GlowTransition.Instance.CallForFadeOut("StoryScene");
+                    AudioManager.Instance.FadeOutAudio();
+                    canRaycast = false; // Disable the raycaster
                 }
             }
         }
 
         // Draw the ray in editor when it is selected
-        void OnDrawGizmosSelected () {
+        private void OnDrawGizmosSelected() {
             Gizmos.color = Color.green;
-            Vector3 direction = transform.TransformDirection (Vector3.forward) * rayDistance;
-            Gizmos.DrawRay (transform.position, direction);
+            Vector3 direction = transform.TransformDirection(Vector3.forward) * rayDistance;
+            Gizmos.DrawRay(transform.position, direction);
         }
     }
 }
