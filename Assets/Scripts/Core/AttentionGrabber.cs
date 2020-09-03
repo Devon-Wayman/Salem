@@ -15,10 +15,10 @@ namespace Salem.Core {
         // Enable/disable this feature
         private bool isEnabled = true;
 
-        // All audio sources in scene with exception of the one attatched to this game object
+        // Audio sources in scene except the one on this gameobject
         private List<AudioSource> sceneAudioSources = new List<AudioSource>();
 
-        // All animators in the scene
+        // Animators in the scene
         private List<Animator> sceneAnimators = new List<Animator>();
 
         // Awareness check coroutine variables
@@ -26,18 +26,24 @@ namespace Salem.Core {
         private Coroutine timeScaleMaster = null;
         private WaitForSecondsRealtime awarenessDelay = new WaitForSecondsRealtime(3);
 
-        // Player's camera
-        public Transform playerCamera = null;
+        // Player's camera transform
+        private Transform playerCamera = null;
 
         // Interest region variables
+        [Header("User POI")]
         [Range(0, 180)]
         public int interestAngle = 0;
-        public float minInterestAngle, maxInterestAngle; // Final min and max results for interest region
+        // Bool to determine if player was previously looking away from POI
         public bool wasLookingAway = false;
 
         // Audio components
-        public AudioSource grabberAudioSource = null;
-        public AudioClip[] grabberAudioClips;
+        [Header("Audio Clips")]
+        public AudioClip[] lookedAwayAudio;
+        public AudioClip[] returnedAttentionClips;
+        private AudioSource grabberAudioSource = null;
+
+        [Header("Visual Cues")]
+        public GameObject visualCueManager = null;
 
         private void Awake() {
             foreach (AudioSource source in FindObjectsOfType<AudioSource>()) {
@@ -57,10 +63,6 @@ namespace Salem.Core {
         private void Start() {
             // If this feature is enabled on start, begin the awareness check coroutine
             if (isEnabled) {
-                // Set min and max view angle respectivley
-                minInterestAngle = interestAngle * -1;
-                maxInterestAngle = interestAngle;
-
                 // If checkAwarness is null (coroutine is already running), stop it
                 if (checkAwarness != null) 
                     StopCoroutine(checkAwarness); 
@@ -71,7 +73,6 @@ namespace Salem.Core {
         }
 
         private IEnumerator PlayerAwarnessCheck() {
-
             Debug.Log("Beginning to run awareness checks...");
 
             while (true) {
@@ -113,17 +114,16 @@ namespace Salem.Core {
 
         // Increase/decrease timescale as needed
         private IEnumerator AdjustTimeScale(float requestedTimeScale, float transitionSpeed) {
-
             float startTimeScale = Time.timeScale;
 
             // Increase timescale
             if (startTimeScale < requestedTimeScale) {
                 Debug.Log("Increasing time scale");
+
                 for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / transitionSpeed) {
                     Time.timeScale = Mathf.Lerp(startTimeScale, requestedTimeScale, t);
                     yield return null;
                 }
-
                 // Ensure timescale makes it at 1
                 Time.timeScale = requestedTimeScale;
 
@@ -164,8 +164,11 @@ namespace Salem.Core {
                 audSource.Play();
             }
 
-            // Stop playing any audio clips from this object
-            grabberAudioSource.Stop();
+            // Play a "thank you" audio clip
+            if (grabberAudioSource.isPlaying)
+                grabberAudioSource.Stop();
+            grabberAudioSource.clip = ChooseGrabberAudio(1);
+            grabberAudioSource.Play();
         }
         // Pause all audio and animations
         private void PauseAll() {
@@ -177,12 +180,21 @@ namespace Salem.Core {
                 audSource.Pause();
             }
 
-            // Grab a random attention grabber audio clip
-            grabberAudioSource.clip = ChooseGrabberAudio();
+            // Play a "Look at the material!" audio clip
+            if (grabberAudioSource.isPlaying)
+                grabberAudioSource.Stop();
+
+            grabberAudioSource.clip = ChooseGrabberAudio(0);
             grabberAudioSource.Play();
         }
-        private AudioClip ChooseGrabberAudio() {
-            return grabberAudioClips[UnityEngine.Random.Range(0, grabberAudioClips.Length)];
+        // Grabs a random clip for either resume or pause needs
+        // 0 = player looked/looking away audio. 1 = player returned attention
+        private AudioClip ChooseGrabberAudio(int requestId) {
+            if (requestId == 0)
+                return lookedAwayAudio[UnityEngine.Random.Range(0, lookedAwayAudio.Length)];
+
+            // If ID is anything other than 0, play a thank you
+            return lookedAwayAudio[UnityEngine.Random.Range(0, returnedAttentionClips.Length)];
         }
     }
 }
