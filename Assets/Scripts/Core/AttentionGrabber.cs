@@ -1,4 +1,5 @@
 ﻿// Author: Devon Wayman 2020
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace Salem.Core {
     public class AttentionGrabber : MonoBehaviour {
 
         // Enable/disable this feature
-        private bool isEnabled = true;
+        public bool isEnabled = true;
 
         // Audio sources in scene except the one on this gameobject
         private List<AudioSource> sceneAudioSources = new List<AudioSource>();
@@ -46,13 +47,8 @@ namespace Salem.Core {
         public GameObject visualCueManager = null;
 
         private void Awake() {
-            foreach (AudioSource source in FindObjectsOfType<AudioSource>()) {
-                if (source.gameObject.name != this.gameObject.name)
-                    sceneAudioSources.Add(source);
-            }
-            foreach (Animator  animator in FindObjectsOfType<Animator>()) {
-                sceneAnimators.Add(animator);
-            }
+            // Get audio sources and animators in the scene
+            RetrieveAnimatorsAndAudioSources();
 
             if (grabberAudioSource == null)
                 grabberAudioSource = GetComponent<AudioSource>();
@@ -77,6 +73,40 @@ namespace Salem.Core {
             }
         }
 
+        public void SetIncomingScene(int newPOIRange) {
+            // Clear all lists of previously held objects
+            sceneAnimators.Clear();
+            sceneAudioSources.Clear();
+
+            // Get all newly imported animators and audio sources in the scene
+            RetrieveAnimatorsAndAudioSources();
+
+            // Set interestAngle to passed in value if its >= 1
+            if (newPOIRange >= 1) {
+                // Ensure that the max value of 180 cannot be surpassed
+                if (newPOIRange > 180)
+                    newPOIRange = 180;
+
+                interestAngle = newPOIRange;
+            }
+            // If 0 is passed in, disable the POI check behavior
+            else if (newPOIRange == 0) {
+                
+                isEnabled = false;
+            }
+        }
+
+        private void RetrieveAnimatorsAndAudioSources() {
+            foreach (AudioSource source in FindObjectsOfType<AudioSource>()) {
+                if (source.gameObject.name != this.gameObject.name)
+                    sceneAudioSources.Add(source);
+            }
+            foreach (Animator animator in FindObjectsOfType<Animator>()) {
+                sceneAnimators.Add(animator);
+            }
+        }
+
+        // Check if player is looking within POI boundary every 3 seconds
         private IEnumerator PlayerAwarnessCheck() {
             Debug.Log("Beginning awareness checks...");
 
@@ -88,7 +118,7 @@ namespace Salem.Core {
                 if (WithinPOIBounds()) {
                     // If player was previously not looking into POI, resume all animations and audio
                     if (wasLookingAway) {
-                        Debug.Log("Player has returned gaze to POI. Speeding up time and resuming animations/audio");
+                        Debug.Log("Player has returned gaze to POI. Resuming animations and audio");
 
                         // Check if time scale master is already running
                         if (timeScaleMaster != null)
@@ -119,7 +149,6 @@ namespace Salem.Core {
                 }
             }
         }
-
         // Check if camera is facing within the POI bounds
         private bool WithinPOIBounds() {
             if (Vector3.Angle(playerCamera.forward, Vector3.forward) <= interestAngle) {
@@ -128,6 +157,7 @@ namespace Salem.Core {
                 return false;
             }
         }
+        
         // Resume all audio and animations
         private void ResumeAll() {
             wasLookingAway = false;
@@ -139,17 +169,13 @@ namespace Salem.Core {
                 audSource.Play();
             }
 
-            // Check if there are audio clips avaialble to retrieve
-            // Check if there are audio clips in the lookedAwayAudio array
-            if (returnedAttentionClips.Length == 0) {
-                Debug.LogWarning("No lookedAway audio clips available");
-            } else {
-                // Play a "thank you" audio clip
-                if (grabberAudioSource.isPlaying)
-                    grabberAudioSource.Stop();
-                grabberAudioSource.clip = ChooseGrabberAudio(1);
-                grabberAudioSource.Play();
-            }
+
+            // Play a "thank you" audio clip
+            if (grabberAudioSource.isPlaying)
+                grabberAudioSource.Stop();
+            grabberAudioSource.clip = ChooseGrabberAudio(1);
+            grabberAudioSource.Play();
+
         }
         // Pause all audio and animations
         private void PauseAll() {
@@ -161,24 +187,23 @@ namespace Salem.Core {
                 audSource.Pause();
             }
 
-            if (lookedAwayAudio.Length == 0) {
-                Debug.LogWarning("No returned attention audio clips available");
-            } else {
-                // Play a "Look at the material!" audio clip
-                if (grabberAudioSource.isPlaying)
-                    grabberAudioSource.Stop();
 
-                grabberAudioSource.clip = ChooseGrabberAudio(0);
-                grabberAudioSource.Play();
-            }
+            // Play a "Look at the material!" audio clip
+            if (grabberAudioSource.isPlaying)
+                grabberAudioSource.Stop();
+
+            grabberAudioSource.clip = ChooseGrabberAudio(0);
+            grabberAudioSource.Play();
+
         }
         // Grabs a random clip for either resume or pause needs. 0 = player looked/looking away audio. 1 = player returned attention
         private AudioClip ChooseGrabberAudio(int requestId) {
             if (requestId == 0)
                 return lookedAwayAudio[UnityEngine.Random.Range(0, lookedAwayAudio.Length)];
-
-            // If ID is anything other than 0, play a thank you
-            return lookedAwayAudio[UnityEngine.Random.Range(0, returnedAttentionClips.Length)];
+            else {
+                // If ID is anything other than 0, play a thank you
+                return returnedAttentionClips[UnityEngine.Random.Range(0, returnedAttentionClips.Length)];
+            }
         }
     }
 }

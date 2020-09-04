@@ -43,7 +43,8 @@ namespace Salem.Core.Interaction {
 
             if (Physics.Raycast(ray, out hit, rayDistance)) {
                 if (hit.transform.name == "Book") {
-                    GlowTransition.Instance.CallForFadeOut("StoryScene");
+                    // If raycast hits the book
+                    GlowTransition.Instance.CallForFadeOut("StoryMode");
                     AudioManager.Instance.FadeOutAudio();
                     canRaycast = false; // Disable the raycaster
                 }
