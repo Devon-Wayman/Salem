@@ -56,8 +56,13 @@ namespace Salem.Core {
 
             if (grabberAudioSource == null)
                 grabberAudioSource = GetComponent<AudioSource>();
-            
-            playerCamera = Camera.main.gameObject.transform; // Grab the main camera transform
+
+            // Grab the main camera transform
+            playerCamera = Camera.main.gameObject.transform;
+
+            // Make sure visual look cues arent activated
+            if (visualCueManager.activeSelf)
+                visualCueManager.SetActive(false);
         }
 
         private void Start() {
@@ -73,7 +78,7 @@ namespace Salem.Core {
         }
 
         private IEnumerator PlayerAwarnessCheck() {
-            Debug.Log("Beginning to run awareness checks...");
+            Debug.Log("Beginning awareness checks...");
 
             while (true) {
                 // Wait three seconds before running the check
@@ -89,59 +94,29 @@ namespace Salem.Core {
                         if (timeScaleMaster != null)
                             StopCoroutine(timeScaleMaster);
 
-                        // Speed up time
-                        timeScaleMaster = StartCoroutine(AdjustTimeScale(1f, 1f));         
+                        // If visual cues are enabled, disable them
+                        if (visualCueManager.activeSelf)
+                            visualCueManager.SetActive(false);
+
+                        ResumeAll();
                     }
-                    Debug.Log("Player is in POI region");
                 } 
                 // If not looking within the subject range
                 else if (!WithinPOIBounds()) {
                     Debug.Log("Player is not viewing main content. Playing attention grabber audio");
+
+                    if (!visualCueManager.activeSelf) 
+                        visualCueManager.SetActive(true);
 
                     // If player was previously not looking away, slow down time and pause all animations/audio
                     if (!wasLookingAway) {
                         // Check if time scale master is already running
                         if (timeScaleMaster != null)
                             StopCoroutine(timeScaleMaster);
-
-                        // slow down time
-                        timeScaleMaster = StartCoroutine(AdjustTimeScale(0f, 1f));
+                        
                         PauseAll();
                     }    
                 }
-            }
-        }
-
-        // Increase/decrease timescale as needed
-        private IEnumerator AdjustTimeScale(float requestedTimeScale, float transitionSpeed) {
-            float startTimeScale = Time.timeScale;
-
-            // Increase timescale
-            if (startTimeScale < requestedTimeScale) {
-                Debug.Log("Increasing time scale");
-
-                for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / transitionSpeed) {
-                    Time.timeScale = Mathf.Lerp(startTimeScale, requestedTimeScale, t);
-                    yield return null;
-                }
-                // Ensure timescale makes it at 1
-                Time.timeScale = requestedTimeScale;
-
-                // Audio and animations shouldnt be called until time scale is at 1 to prevent
-                // audio and animation sync issues
-                ResumeAll();
-            }
-
-            // Decrease timescale
-            if (startTimeScale > requestedTimeScale) {
-                Debug.Log("Decreasing time scale");
-
-                for (float t = 0.0f; t < 1.0f; t += Time.deltaTime / transitionSpeed) {
-                    Time.timeScale = Mathf.Lerp(startTimeScale, requestedTimeScale, t);
-                    yield return null;
-                }
-                // Ensure timescale is at 0
-                Time.timeScale = requestedTimeScale;
             }
         }
 
@@ -164,11 +139,17 @@ namespace Salem.Core {
                 audSource.Play();
             }
 
-            // Play a "thank you" audio clip
-            if (grabberAudioSource.isPlaying)
-                grabberAudioSource.Stop();
-            grabberAudioSource.clip = ChooseGrabberAudio(1);
-            grabberAudioSource.Play();
+            // Check if there are audio clips avaialble to retrieve
+            // Check if there are audio clips in the lookedAwayAudio array
+            if (returnedAttentionClips.Length == 0) {
+                Debug.LogWarning("No lookedAway audio clips available");
+            } else {
+                // Play a "thank you" audio clip
+                if (grabberAudioSource.isPlaying)
+                    grabberAudioSource.Stop();
+                grabberAudioSource.clip = ChooseGrabberAudio(1);
+                grabberAudioSource.Play();
+            }
         }
         // Pause all audio and animations
         private void PauseAll() {
@@ -180,15 +161,18 @@ namespace Salem.Core {
                 audSource.Pause();
             }
 
-            // Play a "Look at the material!" audio clip
-            if (grabberAudioSource.isPlaying)
-                grabberAudioSource.Stop();
+            if (lookedAwayAudio.Length == 0) {
+                Debug.LogWarning("No returned attention audio clips available");
+            } else {
+                // Play a "Look at the material!" audio clip
+                if (grabberAudioSource.isPlaying)
+                    grabberAudioSource.Stop();
 
-            grabberAudioSource.clip = ChooseGrabberAudio(0);
-            grabberAudioSource.Play();
+                grabberAudioSource.clip = ChooseGrabberAudio(0);
+                grabberAudioSource.Play();
+            }
         }
-        // Grabs a random clip for either resume or pause needs
-        // 0 = player looked/looking away audio. 1 = player returned attention
+        // Grabs a random clip for either resume or pause needs. 0 = player looked/looking away audio. 1 = player returned attention
         private AudioClip ChooseGrabberAudio(int requestId) {
             if (requestId == 0)
                 return lookedAwayAudio[UnityEngine.Random.Range(0, lookedAwayAudio.Length)];
