@@ -205,6 +205,31 @@ PrefabInstance:
       propertyPath: interestAngle
       value: 45
       objectReference: {fileID: 0}
+    - target: {fileID: 4713838427271417241, guid: a78056854de4ae24ba70d3dd38161979,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713838427271417241, guid: a78056854de4ae24ba70d3dd38161979,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.072832294
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713838427271417241, guid: a78056854de4ae24ba70d3dd38161979,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713838427271417241, guid: a78056854de4ae24ba70d3dd38161979,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.99734426
+      objectReference: {fileID: 0}
+    - target: {fileID: 4713838427271417241, guid: a78056854de4ae24ba70d3dd38161979,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 8.353001
+      objectReference: {fileID: 0}
     - target: {fileID: 4713838427868698794, guid: a78056854de4ae24ba70d3dd38161979,
         type: 3}
       propertyPath: m_LocalPosition.x

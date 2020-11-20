@@ -15,13 +15,13 @@ namespace Salem.Core.Interaction {
         private RaycastHit hit;
 
         // Determine if raycast should be on or off
-        [SerializeField] private bool canRaycast = true;
+        public bool canRaycast = true;
 
         // Distance raycast should shoot (default is 1)
         [SerializeField] private float rayDistance = 1f;
 
         // Current scene name
-        private string currentSceneName = String.Empty;
+        private string currentSceneName = String.Empty; 
 
         private void Awake() {
             // Set current scene name to scene we've loaded into
@@ -32,18 +32,18 @@ namespace Salem.Core.Interaction {
                 this.enabled = false;
         }
 
-        void FixedUpdate() {
+        void Update() {
+            
             // If we shouldnt be raycasting, return
             if (!canRaycast)
                 return;
 
             ray = new Ray(transform.position, transform.forward);
             Vector3 forward = transform.TransformDirection(Vector3.forward) * rayDistance;
-            Debug.DrawRay(transform.position, forward, Color.green);
+            Debug.DrawRay(transform.position, forward, Color.blue);
 
             if (Physics.Raycast(ray, out hit, rayDistance)) {
                 if (hit.transform.name == "Book") {
-                    // If raycast hits the book
                     GlowTransition.Instance.CallForFadeOut("StoryMode");
                     AudioManager.Instance.FadeOutAudio();
                     canRaycast = false; // Disable the raycaster

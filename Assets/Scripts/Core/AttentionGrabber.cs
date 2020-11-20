@@ -1,5 +1,4 @@
 ﻿// Author: Devon Wayman 2020
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -10,6 +9,7 @@ using UnityEngine;
 /// animations and audio
 /// </summary>
 namespace Salem.Core {
+
     [RequireComponent(typeof(AudioSource))]
     public class AttentionGrabber : MonoBehaviour {
 
@@ -161,21 +161,17 @@ namespace Salem.Core {
         // Resume all audio and animations
         private void ResumeAll() {
             wasLookingAway = false;
-
             foreach (Animator animator in sceneAnimators) {
                 animator.speed = 1;
             }
             foreach (AudioSource audSource in sceneAudioSources) {
                 audSource.Play();
             }
-
-
             // Play a "thank you" audio clip
             if (grabberAudioSource.isPlaying)
                 grabberAudioSource.Stop();
             grabberAudioSource.clip = ChooseGrabberAudio(1);
             grabberAudioSource.Play();
-
         }
         // Pause all audio and animations
         private void PauseAll() {
@@ -186,23 +182,20 @@ namespace Salem.Core {
             foreach (AudioSource audSource in sceneAudioSources) {
                 audSource.Pause();
             }
-
-
             // Play a "Look at the material!" audio clip
             if (grabberAudioSource.isPlaying)
                 grabberAudioSource.Stop();
 
             grabberAudioSource.clip = ChooseGrabberAudio(0);
             grabberAudioSource.Play();
-
         }
         // Grabs a random clip for either resume or pause needs. 0 = player looked/looking away audio. 1 = player returned attention
         private AudioClip ChooseGrabberAudio(int requestId) {
             if (requestId == 0)
-                return lookedAwayAudio[UnityEngine.Random.Range(0, lookedAwayAudio.Length)];
+                return lookedAwayAudio[Random.Range(0, lookedAwayAudio.Length)];
             else {
                 // If ID is anything other than 0, play a thank you
-                return returnedAttentionClips[UnityEngine.Random.Range(0, returnedAttentionClips.Length)];
+                return returnedAttentionClips[Random.Range(0, returnedAttentionClips.Length)];
             }
         }
     }

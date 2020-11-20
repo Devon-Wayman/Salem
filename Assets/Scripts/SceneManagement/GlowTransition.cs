@@ -1,4 +1,4 @@
-﻿// Copyright Devon Wayman
+﻿// Author: Devon Wayman
 using System;
 using System.Collections;
 using UnityEngine;
