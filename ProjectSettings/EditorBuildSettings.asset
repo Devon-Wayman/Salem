@@ -11,13 +11,12 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainMenu/MainMenu.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  - enabled: 1
-    path: Assets/Scenes/StoryModeScenes/StoryMode.unity
-    guid: 3f660d56c6236ed49b5612f3649d7706
   m_configObjects:
     Unity.XR.Oculus.Settings: {fileID: 11400000, guid: abde49c2bd9cc0841a61635367908558,
       type: 2}
     Unity.XR.WindowsMR.Settings: {fileID: 11400000, guid: 8095f23647054f74ea57df7cfcc0a2f3,
+      type: 2}
+    com.unity.input.settings: {fileID: 11400000, guid: 4acff92d098c8fc439f58b23342bb56b,
       type: 2}
     com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 994679401aa9d1444aff5f87f1a98e55,
       type: 2}

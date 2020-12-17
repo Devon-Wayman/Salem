@@ -7,10 +7,7 @@ using UnityEngine;
 namespace Visuals {
     public class SelectBookTexture : MonoBehaviour {
         
-        // Renderer attatched to book object on main menu
         private Renderer bookRenderer = null; 
-
-        // Array of starting book textures
         private Texture[] bookTextures = null; 
         
         private void Awake() {
