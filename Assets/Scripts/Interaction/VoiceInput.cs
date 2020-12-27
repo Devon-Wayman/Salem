@@ -45,10 +45,7 @@ public class VoiceInput : MonoBehaviour {
 
     // Exectues when a predetermined phrase is detected
     private void OnPlayerInputRecognized(PhraseRecognizedEventArgs userSpeech) {
-        if (!registerVoiceInput) {
-            Debug.LogWarning("Speech detected byt registerVoiceInput is set to false");
-            return;
-        }
+        if (!registerVoiceInput) return;
         
         Debug.Log($"Detected phrase {userSpeech.text}");
 
@@ -57,6 +54,8 @@ public class VoiceInput : MonoBehaviour {
             actions[userSpeech.text].Invoke();
         } else {
             Debug.LogWarning($"Speech confidence too low to execute either main function. Confidence: {userSpeech.confidence}");
+
+            // Run some sore of "Sorry speak up i cant hear you" response animation
         }
     }
 
