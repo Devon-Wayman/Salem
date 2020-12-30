@@ -1,9 +1,8 @@
-﻿// Author Devon Wayman
-// Date November 26 2020
+﻿// Author: Devon Wayman - November 2020
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.Rendering.Universal;
+using Salem.Accessibility;
 
 
 // TODO:
@@ -13,7 +12,7 @@ using UnityEngine.Rendering.Universal;
 // the camera returning null in this class from occuring.
 
 
-namespace SceneManagement {
+namespace Salem.SceneManagement {
     public class SceneLoadManager : MonoBehaviour {
 
         public static SceneLoadManager Instance;
@@ -24,27 +23,16 @@ namespace SceneManagement {
         public SceneIndexes nextScene;
 
         [Header("Player Objects")]
-        public Camera playerCamera;
         public Animator fadeTransition;
 
         public static SceneLoadManager Current {
             get {
                 if (!Instance) Instance = FindObjectOfType<SceneLoadManager> ();
-                //check for null again
-                //dummy not in scene
-                //might wanna make one
                 return Instance;
             }
         }
         private void Awake() {  
-            if (Current != null && Current != this) {
-                DestroyImmediate(this);
-            } else {
-                name = "SceneLoadManager";
-                SceneManager.sceneLoaded += OnSceneLoaded;
-                SceneManager.sceneUnloaded += OnSceneUnloaded;
-            }
-
+            SceneManager.sceneLoaded += OnSceneLoaded;
             LoadMainMenu();
         }
         private void LoadMainMenu(){
@@ -62,15 +50,12 @@ namespace SceneManagement {
 
 
         #region Event Subscribers
-        private void OnSceneUnloaded(Scene arg0) {
-            Resources.UnloadUnusedAssets();
-            Debug.Log($"Unloaded {arg0.name}'s unused assets");
-        }
+ 
         private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1) {
-            switch((SceneIndexes)arg0.buildIndex) {
+            // Set proper subtitle table based on scene loaded
+            switch ((SceneIndexes)arg0.buildIndex) {
                 case SceneIndexes.STORY_SCENE:
-                    playerCamera.farClipPlane = 100;
-                    playerCamera.GetComponent<UniversalAdditionalCameraData>().renderPostProcessing = false;
+                    SubtitleController.Current.SetLocalisationTable("MainMenuTable");
                     break;
             }
         }

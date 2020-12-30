@@ -1121,7 +1121,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentlyLoadedScene: 0
   nextScene: 0
-  playerCamera: {fileID: 0}
   fadeTransition: {fileID: 515145934}
 --- !u!1 &4713838427116093922
 GameObject:

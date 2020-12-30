@@ -1,8 +1,6 @@
-﻿// Author Devon Wayman
-// Date 12/13/2020
+﻿// Author: Devon Wayman - December 2020
 using UnityEngine;
 
-// Parents item to empty object in scene
 public class ParentCollider : MonoBehaviour {
 
     [Tooltip("Set physics layer this item can interact with")]

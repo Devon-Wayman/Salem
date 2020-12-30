@@ -1,10 +1,8 @@
 ﻿// Author: Devon Wayman
 using UnityEngine;
 
-/// <summary>
-/// Selects random diffuse texture for the opening menu book
-/// </summary>
-namespace Visuals {
+
+namespace Salem.Visuals {
     public class SelectBookTexture : MonoBehaviour {
         
         private Renderer bookRenderer = null; 
