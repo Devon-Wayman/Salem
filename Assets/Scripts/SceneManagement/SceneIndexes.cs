@@ -1,7 +1,5 @@
-﻿// Author Devon Wayman 
-// Date 12/13/2020
+﻿// Author: Devon Wayman - December 2020
 
-// Scenes in build settings with their corresponding build index numbers
 namespace Salem.SceneManagement {
     public enum SceneIndexes {
         MAIN_MENU = 1,

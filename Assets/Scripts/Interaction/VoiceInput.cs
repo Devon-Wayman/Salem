@@ -1,19 +1,13 @@
-﻿// Author Devon Wayman
-// Date 12/14/2020
+﻿// Author: Devon Wayman - December 2020
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Windows.Speech;
 
-/// <summary>
-/// Used to detect spoken words/pharases from the player
-/// Mainly used in the jury chapter but can me modified for other purposes
-/// </summary>
 public class VoiceInput : MonoBehaviour {
-
-    private KeywordRecognizer recognizer;
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+    private KeywordRecognizer recognizer;
     public bool registerVoiceInput = false;
     public bool enableSpeechDetectionOnStart;
 
@@ -23,12 +17,13 @@ public class VoiceInput : MonoBehaviour {
         actions.Add("no", ExecuteGuilty);
         actions.Add("no i am not", ExecuteGuilty);
         actions.Add("nah", ExecuteGuilty);
+        actions.Add("nope", ExecuteGuilty);
 
         recognizer = new KeywordRecognizer(actions.Keys.ToArray());
         recognizer.OnPhraseRecognized += OnPlayerInputRecognized;
 
-        if (!enableSpeechDetectionOnStart) return; 
-            
+        if (!enableSpeechDetectionOnStart) return;
+
         recognizer.Start();
         registerVoiceInput = true;
     }
@@ -46,28 +41,22 @@ public class VoiceInput : MonoBehaviour {
     // Exectues when a predetermined phrase is detected
     private void OnPlayerInputRecognized(PhraseRecognizedEventArgs userSpeech) {
         if (!registerVoiceInput) return;
-        
-        Debug.Log($"Detected phrase {userSpeech.text}");
 
-        // ExectuteGuilty or NotGuilty if confidence is medium or high
+        Debug.Log($"User said: {userSpeech.text}");
+
         if (userSpeech.confidence <= ConfidenceLevel.Medium) {
             actions[userSpeech.text].Invoke();
-        } else {
-            Debug.LogWarning($"Speech confidence too low to execute either main function. Confidence: {userSpeech.confidence}");
-
-            // Run some sore of "Sorry speak up i cant hear you" response animation
+        }
+        // Runs if the user's speech could not be determined
+        else {
+            Debug.LogWarning($"Confidence too low to execute either function.");
         }
     }
 
-    // Called when player says they are not a witch (guilty in
-    // the eyes of the court)
     private void ExecuteGuilty() {
-        Debug.Log("Executing guilty");
+        Debug.Log("User says guilty");
     }
-
-    // Executes when the player says they are guilty of witchcraft (innocent
-    // and saved by the court for "telling the truth")
     private void ExecuteNotGuilty() {
-        Debug.Log("Executing not guilty");
+        Debug.Log("User says not guilty");
     }
 }

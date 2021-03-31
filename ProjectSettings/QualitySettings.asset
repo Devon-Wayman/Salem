@@ -80,6 +80,7 @@ QualitySettings:
     customRenderPipeline: {fileID: 0}
     excludedTargetPlatforms:
     - WebGL
+    - Android
   m_PerPlatformDefaultQuality:
     Android: 0
     Lumin: 1
