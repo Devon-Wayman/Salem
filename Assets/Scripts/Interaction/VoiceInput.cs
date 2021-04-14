@@ -8,8 +8,7 @@ using UnityEngine.Windows.Speech;
 public class VoiceInput : MonoBehaviour {
     private Dictionary<string, Action> actions = new Dictionary<string, Action>();
     private KeywordRecognizer recognizer;
-    public bool registerVoiceInput = false;
-    public bool enableSpeechDetectionOnStart;
+    public bool enableSpeechOnStart;
 
     private void Start() {
         actions.Add("yes", ExecuteNotGuilty);
@@ -22,33 +21,27 @@ public class VoiceInput : MonoBehaviour {
         recognizer = new KeywordRecognizer(actions.Keys.ToArray());
         recognizer.OnPhraseRecognized += OnPlayerInputRecognized;
 
-        if (!enableSpeechDetectionOnStart) return;
+        if (!enableSpeechOnStart) return;
 
-        recognizer.Start();
-        registerVoiceInput = true;
+        if (recognizer != null && enableSpeechOnStart) {
+            recognizer.Start();
+        }
     }
 
     public void ToggleSpeechDetection() {
-        registerVoiceInput = !registerVoiceInput;
-
-        if (registerVoiceInput && !recognizer.IsRunning) {
+        if (!recognizer.IsRunning) {
             recognizer.Start();
-        } else if (!registerVoiceInput && recognizer.IsRunning) {
+        } else if (recognizer.IsRunning) {
             recognizer.Stop();
         }
     }
 
-    // Exectues when a predetermined phrase is detected
     private void OnPlayerInputRecognized(PhraseRecognizedEventArgs userSpeech) {
-        if (!registerVoiceInput) return;
-
         Debug.Log($"User said: {userSpeech.text}");
 
         if (userSpeech.confidence <= ConfidenceLevel.Medium) {
             actions[userSpeech.text].Invoke();
-        }
-        // Runs if the user's speech could not be determined
-        else {
+        } else {
             Debug.LogWarning($"Confidence too low to execute either function.");
         }
     }

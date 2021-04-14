@@ -76,13 +76,10 @@ public class OVRGazePointer : OVRCursor {
     private OVRProgressIndicator progressIndicator;
 
     private static OVRGazePointer _instance;
-    public static OVRGazePointer instance
-    {
+    public static OVRGazePointer instance {
         // If there's no GazePointer already in the scene, instanciate one now.
-        get
-        {
-            if (_instance == null)
-            {
+        get {
+            if (_instance == null) {
                 Debug.Log(string.Format("Instanciating GazePointer", 0));
                 _instance = (OVRGazePointer)GameObject.Instantiate((OVRGazePointer)Resources.Load("Prefabs/GazePointerRing", typeof(OVRGazePointer)));
             }
@@ -95,22 +92,17 @@ public class OVRGazePointer : OVRCursor {
     /// <summary>
     /// Used to determine alpha level of gaze cursor. Could also be used to determine cursor size, for example, as the cursor fades out.
     /// </summary>
-    public float visibilityStrength
-    {
-        get
-        {
+    public float visibilityStrength {
+        get {
             // It's possible there are reasons to show the cursor - such as it hovering over some UI - and reasons to hide
             // the cursor - such as another input method (e.g. mouse) being used. We take both of these in to account.
 
 
             float strengthFromShowRequest;
-            if (hideByDefault)
-            {
+            if (hideByDefault) {
                 // fade the cursor out with time
-                strengthFromShowRequest =  Mathf.Clamp01(1 - (Time.time - lastShowRequestTime) / showTimeoutPeriod);
-            }
-            else
-            {
+                strengthFromShowRequest = Mathf.Clamp01(1 - (Time.time - lastShowRequestTime) / showTimeoutPeriod);
+            } else {
                 // keep it fully visible
                 strengthFromShowRequest = 1;
             }
@@ -126,25 +118,20 @@ public class OVRGazePointer : OVRCursor {
         }
     }
 
-    public float SelectionProgress
-    {
-        get
-        {
+    public float SelectionProgress {
+        get {
             return progressIndicator ? progressIndicator.currentProgress : 0;
         }
-        set
-        {
+        set {
             if (progressIndicator)
                 progressIndicator.currentProgress = value;
         }
     }
 
-    public void Awake()
-    {
+    public void Awake() {
         currentScale = 1;
         // Only allow one instance at runtime.
-        if (_instance != null && _instance != this)
-        {
+        if (_instance != null && _instance != this) {
             enabled = false;
             DestroyImmediate(this);
             return;
@@ -152,25 +139,21 @@ public class OVRGazePointer : OVRCursor {
 
         _instance = this;
 
-		gazeIcon = transform.Find("GazeIcon");
+        gazeIcon = transform.Find("GazeIcon");
         progressIndicator = transform.GetComponent<OVRProgressIndicator>();
     }
 
-    void Update ()
-    {
-		if (rayTransform == null && Camera.main != null)
-			rayTransform = Camera.main.transform;
+    void Update() {
+        if (rayTransform == null && Camera.main != null)
+            rayTransform = Camera.main.transform;
 
         // Move the gaze cursor to keep it in the middle of the view
         transform.position = rayTransform.position + rayTransform.forward * depth;
 
         // Should we show or hide the gaze cursor?
-        if (visibilityStrength == 0 && !hidden)
-        {
+        if (visibilityStrength == 0 && !hidden) {
             Hide();
-        }
-        else if (visibilityStrength > 0 && hidden)
-        {
+        } else if (visibilityStrength > 0 && hidden) {
             Show();
         }
     }
@@ -180,8 +163,7 @@ public class OVRGazePointer : OVRCursor {
     /// </summary>
     /// <param name="pos"></param>
     /// <param name="normal"></param>
-    public override void SetCursorStartDest(Vector3 _, Vector3 pos, Vector3 normal)
-    {
+    public override void SetCursorStartDest(Vector3 _, Vector3 pos, Vector3 normal) {
         transform.position = pos;
 
         if (!matchNormalOnPhysicsColliders) normal = rayTransform.forward;
@@ -202,16 +184,13 @@ public class OVRGazePointer : OVRCursor {
         RequestShow();
     }
 
-    public override void SetCursorRay(Transform ray)
-    {
+    public override void SetCursorRay(Transform ray) {
         // We don't do anything here, because we already set this properly by default in Update.
     }
 
-    void LateUpdate()
-    {
+    void LateUpdate() {
         // This happens after all Updates so we know that if positionSetsThisFrame is zero then nothing set the position this frame
-        if (positionSetsThisFrame == 0)
-        {
+        if (positionSetsThisFrame == 0) {
             // No geometry intersections, so gazing into space. Make the cursor face directly at the camera
             Quaternion newRot = transform.rotation;
             newRot.SetLookRotation(rayTransform.forward, rayTransform.up);
@@ -219,19 +198,17 @@ public class OVRGazePointer : OVRCursor {
         }
 
         Quaternion iconRotation = gazeIcon.rotation;
-		iconRotation.SetLookRotation(transform.rotation * new Vector3(0, 0, 1));
-		gazeIcon.rotation = iconRotation;
+        iconRotation.SetLookRotation(transform.rotation * new Vector3(0, 0, 1));
+        gazeIcon.rotation = iconRotation;
 
-		positionSetsThisFrame = 0;
+        positionSetsThisFrame = 0;
     }
 
     /// <summary>
     /// Request the pointer be hidden
     /// </summary>
-    public void RequestHide()
-    {
-        if (!dimOnHideRequest)
-        {
+    public void RequestHide() {
+        if (!dimOnHideRequest) {
             Hide();
         }
         lastHideRequestTime = Time.time;
@@ -240,18 +217,15 @@ public class OVRGazePointer : OVRCursor {
     /// <summary>
     /// Request the pointer be shown. Hide requests take priority
     /// </summary>
-    public void RequestShow()
-    {
+    public void RequestShow() {
         Show();
         lastShowRequestTime = Time.time;
     }
 
 
     // Disable/Enable child elements when we show/hide the cursor. For performance reasons.
-    void Hide()
-    {
-        foreach (Transform child in transform)
-        {
+    void Hide() {
+        foreach (Transform child in transform) {
             child.gameObject.SetActive(false);
         }
         if (GetComponent<Renderer>())
@@ -259,10 +233,8 @@ public class OVRGazePointer : OVRCursor {
         hidden = true;
     }
 
-    void Show()
-    {
-        foreach (Transform child in transform)
-        {
+    void Show() {
+        foreach (Transform child in transform) {
             child.gameObject.SetActive(true);
         }
         if (GetComponent<Renderer>())

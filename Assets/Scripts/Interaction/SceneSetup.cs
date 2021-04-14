@@ -2,6 +2,9 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
+/// <summary>
+/// Applys preset user position and other player based settings whenever loaded into a new scene
+/// </summary>
 namespace Salem.SceneManagement {
     public class SceneSetup : MonoBehaviour {
         private Camera playerCam = null;
@@ -25,9 +28,7 @@ namespace Salem.SceneManagement {
         /// Call this whenever we load into a new scene
         /// </summary>
         public void UpdateParameters(int newSceneIndex) {
-            //var startSettings = sceneParameters.settings[SceneManager.GetActiveScene().buildIndex];
             var startSettings = sceneParameters.settings[newSceneIndex];
-
             playerCam.nearClipPlane = startSettings.camNearClip;
             playerCam.farClipPlane = startSettings.camFarClip;
             playerCam.GetComponent<UniversalAdditionalCameraData>().renderPostProcessing = startSettings.postProcessing;

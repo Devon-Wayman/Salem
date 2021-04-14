@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   settings:
   - camNearClip: 0.1
-    camFarClip: 500
+    camFarClip: 250
     postProcessing: 1
-    playerStartPosition: {x: 182, y: 0.8, z: 116}
+    playerStartPosition: {x: 0, y: 0, z: 0}
   - camNearClip: 0.1
     camFarClip: 200
     postProcessing: 0

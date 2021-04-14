@@ -1,13 +1,16 @@
 ﻿// Author: Devon Wayman - November 2020
-using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// Controls behavior linked to loading into next scene when requested. If requested index does not
+/// exist then we load the main menu again; creating an infinite loop
+/// </summary>
 namespace Salem.SceneManagement {
     public class SceneLoadSystem : MonoBehaviour {
 
-        private AsyncOperation requestedScene;
+        private AsyncOperation asyncLoader;
         public static SceneLoadSystem Instance;
         public static SceneLoadSystem Current {
             get {
@@ -15,23 +18,20 @@ namespace Salem.SceneManagement {
                 return Instance;
             }
         }
-        private WaitForSeconds loadDelay = new WaitForSeconds(1);
+        private WaitForSeconds transitionDelay = new WaitForSeconds(4);
+
+        private int requestedSceneIndex;
+        private int totalBuiltScenes = 0;
 
         private void Awake() {
             SceneManager.sceneLoaded += OnSceneLoaded; // subscribe event to fire off when new scene is loaded
+            totalBuiltScenes = SceneManager.sceneCountInBuildSettings;
+            Debug.Log($"Found {totalBuiltScenes} scenes in project");
             DontDestroyOnLoad(this.gameObject); // used to keep the player persistent between scene changes
         }
 
-
-        // Remove after testing
-        private void Update() {
-            if (Input.GetKeyDown(KeyCode.Space)) {
-                LoadNextScene();
-            }
-        }
-
-        private void LoadNextScene() {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        public void LoadNextScene() {
+            StartCoroutine(BeginSceneLoad());
         }
 
 
@@ -43,19 +43,25 @@ namespace Salem.SceneManagement {
             SceneSetup.Current.UpdateParameters(newScene.buildIndex);
         }
 
+        private IEnumerator BeginSceneLoad() {
+            requestedSceneIndex = SceneManager.GetActiveScene().buildIndex + 1;
 
-        // Originally called to allow black fade in/out for smoother transition but need to figure something
-        // else out for the new system
-        public IEnumerator BeginSceneLoad() {
-            yield return loadDelay;
+            // request to load main menu if the currently loaded scene + 1 does not exist
+            if (requestedSceneIndex > totalBuiltScenes) {
+                requestedSceneIndex = 0;
+                Debug.LogWarning("Scene at initial requested index does not exist. Loading Main Menu at index 0 instead");
+            }
 
-            while (!requestedScene.isDone) {
-                if (requestedScene.progress >= 0.9f) {
-                    requestedScene.allowSceneActivation = true;
+            yield return transitionDelay;
+            asyncLoader = SceneManager.LoadSceneAsync(requestedSceneIndex);
+            asyncLoader.allowSceneActivation = false;
+
+            while (!asyncLoader.isDone) {
+                if (asyncLoader.progress >= 0.9f) {
+                    asyncLoader.allowSceneActivation = true;
                 }
                 yield return null;
             }
-            yield return loadDelay;
         }
     }
 }
